@@ -1,11 +1,5 @@
 package Vistas;
 
-
-//import com.hikvision.netsdk.INT_PTR;
-//import com.hikvision.netsdk.NET_DVR_PREVIEWINFO;
-//import com.hikvision.netsdk.RealPlayCallBack;
-//import com.hikvision.netsdk.NET_DVR_JPEGPARA;
-
 import com.sun.jna.NativeLong;
 
 import javax.swing.*;
@@ -20,6 +14,7 @@ public class Camaras extends JFrame {
 
     HCNetSDK.NET_DVR_DEVICEINFO_V30 deviceInfo30 ;
     NativeLong lUserID;
+    HCNetSDK.NET_DVR_CLIENTINFO m_strClientInfo;
 
     public String ipAddress = "192.168.0.101";
     public String userName = "admin";
@@ -46,6 +41,8 @@ public class Camaras extends JFrame {
     public void login(){
 
         deviceInfo30 = new HCNetSDK.NET_DVR_DEVICEINFO_V30();
+        m_strClientInfo = new HCNetSDK.NET_DVR_CLIENTINFO();
+        System.out.println("info cliente: "+m_strClientInfo);
 
         lUserID = netSdkInstance.NET_DVR_Login_V30(ipAddress,(short) port, userName, password, deviceInfo30);
         System.out.println("Id camaras: "+ lUserID);
