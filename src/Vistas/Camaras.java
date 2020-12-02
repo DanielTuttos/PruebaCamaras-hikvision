@@ -1,7 +1,12 @@
 package Vistas;
 
+import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
+import com.sun.jna.examples.win32.W32API.HWND;
+import com.sun.jna.ptr.ByteByReference;
 
+import javax.security.sasl.RealmCallback;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,10 +29,13 @@ public class Camaras extends JFrame {
     public String password = "Temporal2020";
     public int port = 8000;
 
+    HCNetSDK.FMSGCallBack fMSFCallBack;
+    HCNetSDK.FRealDataCallBack_V30 RealData = null;
+
     private int realPlayId = -1; // return by NET_DVR_RealPlay_V30
     private int playbackId = -1; // return by NET_DVR_PlayBackByTime
     private int playPort = -1; // play port
-    private int startChannel = 0; // start channel no
+    private int startChannel = 1; // start channel no
     private boolean stopPlayback = false;
     private boolean isShow = true;
 
@@ -54,10 +62,41 @@ public class Camaras extends JFrame {
 
         lUserID = netSdkInstance.NET_DVR_Login_V30(ipAddress,(short) port, userName, password, deviceInfo30);
         System.out.println("Id camaras: "+ lUserID);
-        if (lUserID == -1) {
+        if (lUserID < 0) {
+
+            JOptionPane.showMessageDialog(null,"Login incorrecto, codigo de error: " + netSdkInstance.NET_DVR_GetLastError());
             System.out.println("NET_DVR_Login is failed!Err: "
                     + netSdkInstance.NET_DVR_GetLastError());
+        }else{
+            JOptionPane.showMessageDialog(null,"Login correcto, id: " + lUserID);
+            preview();
         }
 
     }
+
+    public void preview(){
+        HCNetSDK.NET_DVR_PREVIEWINFO previewInfo = new HCNetSDK.NET_DVR_PREVIEWINFO();
+        System.out.println(RealPlayPane.getWidth());
+        System.out.println(RealPlayPane.getHeight());
+        HWND hwnd = new HWND(Native.getComponentPointer(RealPlayPane));
+        previewInfo.hPlayWnd = hwnd;
+        previewInfo.lChannel = startChannel;
+        previewInfo.dwStreamType = 0;
+        previewInfo.dwLinkMode = 0;
+        previewInfo.bBlocked = 1;
+        previewInfo.dwDisplayBufNum = 1;
+        previewInfo.byProtoType = 0;
+        previewInfo.byPreviewMode = 0;
+
+        realPlayId = netSdkInstance.NET_DVR_RealPlay_V40(lUserID, previewInfo, null, null);
+        System.out.println("ID de informacion real: " + realPlayId);
+        if(realPlayId < 0 ){
+            JOptionPane.showMessageDialog(null,"No se pudo iniciar el preview, codigo de error "
+                    + netSdkInstance.NET_DVR_GetLastError());
+            System.out.println("NET_DVR_Login is failed!Err: "
+                    + netSdkInstance.NET_DVR_GetLastError());
+            return ;
+        }
+    }
+
 }
