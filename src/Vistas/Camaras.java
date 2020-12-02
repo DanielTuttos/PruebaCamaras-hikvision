@@ -16,7 +16,7 @@ public class Camaras extends JFrame {
 
 
     HCNetSDK.NET_DVR_DEVICEINFO_V30 deviceInfo30 ;
-    NativeLong lUserID;
+    int lUserID;
     HCNetSDK.NET_DVR_CLIENTINFO m_strClientInfo;
 
     public String ipAddress = "192.168.0.101";
@@ -35,7 +35,6 @@ public class Camaras extends JFrame {
     public Camaras(){
         super("Camaras");
         setContentPane(pane1);
-        lUserID = new NativeLong(-1);
         boolean initSuc = netSdkInstance.NET_DVR_Init();
         System.out.println("se inicializo el sdk: "+ initSuc);
 
@@ -55,8 +54,7 @@ public class Camaras extends JFrame {
 
         lUserID = netSdkInstance.NET_DVR_Login_V30(ipAddress,(short) port, userName, password, deviceInfo30);
         System.out.println("Id camaras: "+ lUserID);
-        long userID = lUserID.longValue();
-        if (userID == -1) {
+        if (lUserID == -1) {
             System.out.println("NET_DVR_Login is failed!Err: "
                     + netSdkInstance.NET_DVR_GetLastError());
         }
