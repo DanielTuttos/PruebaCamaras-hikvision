@@ -28,7 +28,7 @@ public class Login {
                 //frame1.setVisible(true);
 
                 JFrame frame1 = new Camaras();
-                frame1.setSize(800,700);
+                frame1.setSize(800,500);
                 frame1.setVisible(true);
 
             }

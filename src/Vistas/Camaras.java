@@ -3,11 +3,14 @@ package Vistas;
 import com.sun.jna.NativeLong;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 public class Camaras extends JFrame {
     private JPanel pane1;
     private JPanel RealPlayPane;
+    private JButton btnLogin;
 
     static HCNetSDK netSdkInstance = HCNetSDK.INSTANCE;
 
@@ -35,14 +38,20 @@ public class Camaras extends JFrame {
         lUserID = new NativeLong(-1);
         boolean initSuc = netSdkInstance.NET_DVR_Init();
         System.out.println("se inicializo el sdk: "+ initSuc);
-        login();
+
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                login();
+            }
+        });
     }
 
     public void login(){
 
         deviceInfo30 = new HCNetSDK.NET_DVR_DEVICEINFO_V30();
         m_strClientInfo = new HCNetSDK.NET_DVR_CLIENTINFO();
-        System.out.println("info cliente: "+m_strClientInfo);
+        System.out.println("device info v30: "+ deviceInfo30);
 
         lUserID = netSdkInstance.NET_DVR_Login_V30(ipAddress,(short) port, userName, password, deviceInfo30);
         System.out.println("Id camaras: "+ lUserID);
